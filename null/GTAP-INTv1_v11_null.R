@@ -1,6 +1,6 @@
 library(teems)
 
-model_specs <- teems_model(tab_file = "GTAP-INTv1",
+model_specs <- em_model(tab_file = "GTAP-INTv1",
                            var_omit = c("atall", "tfd", "avaall", "tf", "tfm",
                                         "tgd", "tgm", "tpd", "tpm"))
 

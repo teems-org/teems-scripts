@@ -18,7 +18,7 @@ cmf_path <- teems_deploy(model_config = model_specs,
                          set_config = set_specs,
                          data_config = data_specs,
                          model_name = model_name,
-                         base_dir = "~/teems_runs/null", .testing = T)
+                         base_dir = "~/teems_runs/null")
 
 teems_solve(cmf_path = cmf_path,
             n_tasks = 1,
