@@ -9,24 +9,22 @@ main_dat <- ems_data(dat_input = "~/dat/GTAP/v11c/flexAgg11c17/gsdfdat.har",
 
 qfd_shk <- ems_shock(var = "qfd",
                      type = "uniform",
-                     input = -0.75,
+                     input = 1,
                      REGs = "lam",
                      PROD_COMMj = "crops")
 
-y_in <- ems_swap(var = "y")
-incomeslack_out <- ems_swap(var = "incomeslack")
+yp_in <- ems_swap(var = "yp")
+dppriv_out <- ems_swap(var = "dppriv")
 
-y_shk <- ems_shock(var = "y",
-                   type = "uniform",
-                   input = 0.5,
-                   REGr = "oecd",
-                   ALLTIMEt = "3")
+yp_shk <- ems_shock(var = "yp",
+                    type = "uniform",
+                    input = 1)
 
 model_specs <- ems_model(tab_file = "GTAP-INTv1",
                          var_omit = c("atall", "avaall"),
-                         shock = list(qfd_shk, y_shk),
-                         swap_in = list("qfd", y_in),
-                         swap_out = list("tfd", incomeslack_out))
+                         shock = list(qfd_shk, yp_shk),
+                         swap_in = list("qfd", yp_in),
+                         swap_out = list("tfd", dppriv_out))
 
 load_specs <- ems_load(ems_input = main_dat,
                        REG = "AR5",
@@ -64,7 +62,8 @@ variables <- ems_compose(cmf_path = cmf_path, type = "variable")
 coefficients <- ems_compose(cmf_path = cmf_path, type = "coefficient")
 sets <- ems_compose(cmf_path = cmf_path, type = "set")
 
-all(variables$dat$qfd[REGs == "lam" & PROD_COMMj == "crops"]$Value == -0.75,
-    variables$dat$incomeslack$Value != 0,
-    variables$dat$y[REGr == "oecd" & ALLTIMEt == 3]$Value == 0.5)
-
+all(variables$dat$qfd[REGs == "lam" & PROD_COMMj == "crops"]$Value == 1,
+    variables$dat$qfd[REGs != "lam" & PROD_COMMj != "crops"]$Value == 0,
+    variables$dat$tfd$Value != 0,
+    variables$dat$dppriv$Value != 0,
+    variables$dat$yp$Value == 1)

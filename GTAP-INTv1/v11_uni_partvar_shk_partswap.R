@@ -17,7 +17,7 @@ tfd_out <- ems_swap(var = "tfd",
 
 qfd_shk <- ems_shock(var = "qfd",
                      type = "uniform",
-                     input = -3,
+                     input = 1,
                      REGs = "lam",
                      PROD_COMMj = "crops")
 
@@ -63,5 +63,7 @@ variables <- ems_compose(cmf_path = cmf_path, type = "variable")
 coefficients <- ems_compose(cmf_path = cmf_path, type = "coefficient")
 sets <- ems_compose(cmf_path = cmf_path, type = "set")
 
-all(variables$dat$qfd[REGs == "lam" & PROD_COMMj == "crops"]$Value == -3,
-    variables$dat$qfd[REGs != "lam" & PROD_COMMj != "crops"]$Value != 0)
+all(variables$dat$qfd[REGs == "lam" & PROD_COMMj == "crops"]$Value == 1,
+    variables$dat$qfd[REGs != "lam" & PROD_COMMj != "crops"]$Value != 0,
+    variables$dat$tfd[REGr == "lam" & PROD_COMMj == "crops"]$Value != 0,
+    variables$dat$tfd[REGr != "lam" & PROD_COMMj != "crops"]$Value == 0)
