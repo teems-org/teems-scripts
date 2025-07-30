@@ -50,7 +50,6 @@ ems_solve(cmf_path = cmf_path,
           n_tasks = 2,
           n_subintervals = 2,
           matrix_method = "NDBBD",
-          n_timesteps = 11,
           solution_method = "mod_midpoint")
 
 inputdata <- ems_compose(cmf_path = cmf_path, type = "inputdata")
