@@ -1,54 +1,56 @@
 library(teems)
 
-main_dat <- ems_data(dat_input = "~/dat/GTAP/v10A/flexagg10AY14/gsddat.har",
-                     par_input = "~/dat/GTAP/v10A/flexagg10AY14/gsdpar.har",
-                     set_input = "~/dat/GTAP/v10A/flexagg10AY14/gsdset.har",
-                     tab_file = "GTAP-INTv1",
-                     time_steps = c(0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 16))
+data <- ems_data(dat_input = "~/dat/GTAP/v10A/flexagg10AY14/gsddat.har",
+                 par_input = "~/dat/GTAP/v10A/flexagg10AY14/gsdpar.har",
+                 set_input = "~/dat/GTAP/v10A/flexagg10AY14/gsdset.har",
+                 REG = "big3",
+                 TRAD_COMM = "macro_sector",
+                 ENDW_COMM = "labor_agg",
+                 time_steps = c(0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 16))
 
-numeraire_shk <- ems_shock(var = "pfactwld",
-                           type = "uniform",
-                           input = 0.1)
+model <- ems_model(
+  tab_file = "GTAP-INTv1",
+  var_omit = c(
+    "atall",
+    "tfd",
+    "avaall",
+    "tf",
+    "tfm",
+    "tgd",
+    "tgm",
+    "tpd",
+    "tpm"
+  )
+)
 
-model_specs <- ems_model(tab_file = "GTAP-INTv1",
-                         var_omit = c("atall", "tfd", "avaall", "tf", "tfm",
-                                      "tgd", "tgm", "tpd", "tpm"),
-                         shock = numeraire_shk)
+numeraire <- ems_shock(var = "pfactwld",
+                       type = "uniform",
+                       value = 5)
 
-load_specs <- ems_load(ems_input = main_dat,
-                       REG = "AR5",
-                       TRAD_COMM = "macro_sector",
-                       ENDW_COMM = "labor_agg")
+cmf_path <- ems_deploy(data = data,
+                       model = model,
+                       shock = numeraire)
 
-model_name <- "v10_numeraire"
-
-cmf_path <- ems_deploy(model_config = model_specs,
-                       load_config = load_specs,
-                       model_name = model_name)
-
-ems_solve(cmf_path = cmf_path,
-          n_tasks = 1,
-          n_subintervals = 1,
-          matrix_method = "LU",
-          solution_method = "Johansen")
+outputs <- ems_solve(cmf_path = cmf_path,
+                     n_tasks = 1,
+                     n_subintervals = 1,
+                     matrix_method = "LU",
+                     solution_method = "Johansen")
 
 ems_solve(cmf_path = cmf_path,
           n_tasks = 2,
           n_subintervals = 2,
           steps = c(2, 4, 8),
           matrix_method = "SBBD",
-          solution_method = "mod_midpoint")
+          solution_method = "mod_midpoint",
+          suppress_outputs = TRUE)
 
 ems_solve(cmf_path = cmf_path,
           n_tasks = 2,
           n_subintervals = 2,
           matrix_method = "NDBBD",
           n_timesteps = 11,
-          solution_method = "mod_midpoint")
+          solution_method = "mod_midpoint",
+          suppress_outputs = TRUE)
 
-inputdata <- ems_compose(cmf_path = cmf_path, type = "inputdata")
-variables <- ems_compose(cmf_path = cmf_path, type = "variable")
-coefficients <- ems_compose(cmf_path = cmf_path, type = "coefficient")
-sets <- ems_compose(cmf_path = cmf_path, type = "set")
-
-all(variables$dat$pfactwld$Value == 0.1)
+all(outputs$dat$pfactwld$Value == 5)

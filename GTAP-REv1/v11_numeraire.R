@@ -24,8 +24,13 @@ model <- ems_model(
   )
 )
 
+numeraire <- ems_shock(var = "pfactwld",
+                       type = "uniform",
+                       value = 5)
+
 cmf_path <- ems_deploy(data = data,
-                       model = model)
+                       model = model,
+                       shock = numeraire)
 
 outputs <- ems_solve(cmf_path = cmf_path,
                      n_tasks = 1,
@@ -56,3 +61,4 @@ ems_solve(cmf_path = cmf_path,
           solution_method = "mod_midpoint",
           suppress_outputs = TRUE)
 
+all(outputs$dat$pfactwld$Value == 5)

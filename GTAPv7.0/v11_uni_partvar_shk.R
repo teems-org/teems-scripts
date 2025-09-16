@@ -7,23 +7,11 @@ data <- ems_data(
   REG = "AR5",
   COMM = "macro_sector",
   ACTS = "macro_sector",
-  ENDW = "labor_agg",
-  time_steps = c(0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 16)
+  ENDW = "labor_agg"
 )
 
 model <- ems_model(
-  tab_file = "GTAP-REv1",
-  var_omit = c(
-    "atall",
-    "avaall",
-    "tfe",
-    "tfd",
-    "tfm",
-    "tgd",
-    "tgm",
-    "tid",
-    "tim"
-  )
+  tab_file = "GTAPv7.0"
 )
 
 aoall_shk <- ems_shock(
@@ -44,7 +32,7 @@ outputs <- ems_solve(
   cmf_path = cmf_path,
   n_tasks = 1,
   n_subintervals = 1,
-  matrix_method = "SBBD",
+  matrix_method = "LU",
   solution_method = "mod_midpoint"
 )
 

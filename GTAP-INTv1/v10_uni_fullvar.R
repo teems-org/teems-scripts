@@ -3,7 +3,7 @@ library(teems)
 data <- ems_data(dat_input = "~/dat/GTAP/v10A/flexagg10AY14/gsddat.har",
                  par_input = "~/dat/GTAP/v10A/flexagg10AY14/gsdpar.har",
                  set_input = "~/dat/GTAP/v10A/flexagg10AY14/gsdset.har",
-                 REG = "big3",
+                 REG = "AR5",
                  TRAD_COMM = "macro_sector",
                  ENDW_COMM = "labor_agg",
                  time_steps = c(0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 16))
@@ -23,29 +23,18 @@ model <- ems_model(
   )
 )
 
+uni_shock <- ems_shock(var = "pop",
+                       type = "uniform",
+                       value = 1)
+
 cmf_path <- ems_deploy(data = data,
-                       model = model)
+                       model = model,
+                       shock = uni_shock)
 
 outputs <- ems_solve(cmf_path = cmf_path,
                      n_tasks = 1,
                      n_subintervals = 1,
-                     matrix_method = "LU",
-                     solution_method = "Johansen")
+                     matrix_method = "SBBD",
+                     solution_method = "mod_midpoint")
 
-ems_solve(cmf_path = cmf_path,
-          n_tasks = 2,
-          n_subintervals = 2,
-          steps = c(2, 4, 8),
-          matrix_method = "SBBD",
-          solution_method = "mod_midpoint",
-          suppress_outputs = TRUE)
-
-ems_solve(cmf_path = cmf_path,
-          n_tasks = 2,
-          n_subintervals = 2,
-          matrix_method = "NDBBD",
-          n_timesteps = 11,
-          solution_method = "mod_midpoint",
-          suppress_outputs = TRUE)
-
-
+all(outputs$dat$pop$Value == 1)

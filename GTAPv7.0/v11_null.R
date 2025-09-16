@@ -1,25 +1,26 @@
 library(teems)
 
-data <- ems_data(dat_input = "~/dat/GTAP/v9/2011/gddat.har",
-                 par_input = "~/dat/GTAP/v9/2011/gdpar.har",
-                 set_input = "~/dat/GTAP/v9/2011/gdset.har",
+data <- ems_data(dat_input = "~/dat/GTAP/v11c/flexAgg11c17/gsdfdat.har",
+                 par_input = "~/dat/GTAP/v11c/flexAgg11c17/gsdfpar.har",
+                 set_input = "~/dat/GTAP/v11c/flexAgg11c17/gsdfset.har",
                  REG = "big3",
-                 TRAD_COMM = "macro_sector",
-                 ENDW_COMM = "labor_agg")
+                 COMM = "macro_sector",
+                 ACTS = "macro_sector",
+                 ENDW = "labor_agg")
 
 model <- ems_model(
-  tab_file = "GTAPv6.2",
-  var_omit = c(
-    "atall",
-    "tfd",
-    "avaall",
-    "tf",
-    "tfm",
-    "tgd",
-    "tgm",
-    "tpd",
-    "tpm"
-  )
+  tab_file = "GTAPv7.0",
+  var_omit = c("atall",
+               "avaall",
+               "tfe",
+               "tfd",
+               "tfm",
+               "tgd",
+               "tgm",
+               "tpdall",
+               "tpmall",
+               "tid",
+               "tim")
 )
 
 cmf_path <- ems_deploy(data = data,
@@ -43,5 +44,4 @@ ems_check(check = "baseline",
           outputs = outputs,
           data = data,
           model = model,
-          max_tolerance = 1e-5,
-          null_shock = TRUE)
+          max_tolerance = 1e-5)

@@ -5,20 +5,23 @@ data <- ems_data(dat_input = "~/dat/GTAP/v9/2011/gddat.har",
                  set_input = "~/dat/GTAP/v9/2011/gdset.har",
                  REG = "AR5",
                  TRAD_COMM = "macro_sector",
-                 ENDW_COMM = "labor_agg",
-                 time_steps = c(0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 16))
+                 ENDW_COMM = "labor_agg")
 
 model <- ems_model(
-  tab_file = "GTAP-INTv1"
+  tab_file = "GTAPv6.2"
 )
 
-numeraire <- ems_shock(var = "pfactwld",
+uni_shock <- ems_shock(var = "qfd",
                        type = "uniform",
-                       value = 5)
+                       value = -3,
+                       REGs = "lam",
+                       PROD_COMMj = "crops")
 
 cmf_path <- ems_deploy(data = data,
                        model = model,
-                       shock = numeraire)
+                       swap_in = "qfd",
+                       swap_out = "tfd",
+                       shock = uni_shock)
 
 outputs <- ems_solve(cmf_path = cmf_path,
                      n_tasks = 1,
@@ -26,12 +29,5 @@ outputs <- ems_solve(cmf_path = cmf_path,
                      matrix_method = "LU",
                      solution_method = "Johansen")
 
-ems_solve(cmf_path = cmf_path,
-          n_tasks = 1,
-          n_subintervals = 1,
-          steps = c(2, 4, 8),
-          matrix_method = "SBBD",
-          solution_method = "mod_midpoint",
-          suppress_outputs = TRUE)
-
-all(outputs$dat$pfactwld$Value == 5)
+all(outputs$dat$qfd[REGs == "lam" & PROD_COMMj == "crops"]$Value == -3,
+    outputs$dat$qfd[REGs != "lam" & PROD_COMMj != "crops"]$Value == 0)

@@ -1,8 +1,8 @@
 library(teems)
 
-data <- ems_data(dat_input = "~/dat/GTAP/v9/2011/gddat.har",
-                 par_input = "~/dat/GTAP/v9/2011/gdpar.har",
-                 set_input = "~/dat/GTAP/v9/2011/gdset.har",
+data <- ems_data(dat_input = "~/dat/GTAP/v10A/flexagg10AY14/gsddat.har",
+                 par_input = "~/dat/GTAP/v10A/flexagg10AY14/gsdpar.har",
+                 set_input = "~/dat/GTAP/v10A/flexagg10AY14/gsdset.har",
                  REG = "AR5",
                  TRAD_COMM = "macro_sector",
                  ENDW_COMM = "labor_agg",
@@ -12,13 +12,14 @@ model <- ems_model(
   tab_file = "GTAP-INTv1"
 )
 
-numeraire <- ems_shock(var = "pfactwld",
+uni_shock <- ems_shock(var = "pop",
                        type = "uniform",
-                       value = 5)
+                       value = 1,
+                       REGr = "asia")
 
 cmf_path <- ems_deploy(data = data,
                        model = model,
-                       shock = numeraire)
+                       shock = uni_shock)
 
 outputs <- ems_solve(cmf_path = cmf_path,
                      n_tasks = 1,
@@ -26,12 +27,5 @@ outputs <- ems_solve(cmf_path = cmf_path,
                      matrix_method = "LU",
                      solution_method = "Johansen")
 
-ems_solve(cmf_path = cmf_path,
-          n_tasks = 1,
-          n_subintervals = 1,
-          steps = c(2, 4, 8),
-          matrix_method = "SBBD",
-          solution_method = "mod_midpoint",
-          suppress_outputs = TRUE)
-
-all(outputs$dat$pfactwld$Value == 5)
+all(outputs$dat$pop[REGr == "asia"]$Value == 1,
+    outputs$dat$pop[REGr != "asia"]$Value == 0)

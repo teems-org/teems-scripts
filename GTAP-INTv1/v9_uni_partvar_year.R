@@ -12,26 +12,22 @@ model <- ems_model(
   tab_file = "GTAP-INTv1"
 )
 
-numeraire <- ems_shock(var = "pfactwld",
+uni_shock <- ems_shock(var = "pop",
                        type = "uniform",
-                       value = 5)
+                       value = 1,
+                       REGr = "asia",
+                       Year = 2015)
 
 cmf_path <- ems_deploy(data = data,
                        model = model,
-                       shock = numeraire)
+                       shock = uni_shock)
 
 outputs <- ems_solve(cmf_path = cmf_path,
                      n_tasks = 1,
                      n_subintervals = 1,
-                     matrix_method = "LU",
-                     solution_method = "Johansen")
+                     matrix_method = "SBBD",
+                     solution_method = "mod_midpoint")
 
-ems_solve(cmf_path = cmf_path,
-          n_tasks = 1,
-          n_subintervals = 1,
-          steps = c(2, 4, 8),
-          matrix_method = "SBBD",
-          solution_method = "mod_midpoint",
-          suppress_outputs = TRUE)
-
-all(outputs$dat$pfactwld$Value == 5)
+all(outputs$dat$pop[REGr == "asia" & Year == 2015]$Value == 1,
+    outputs$dat$pop[REGr == "asia" & Year != 2015]$Value == 0,
+    outputs$dat$pop[REGr != "asia"]$Value == 0)

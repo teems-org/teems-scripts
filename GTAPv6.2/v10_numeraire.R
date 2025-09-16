@@ -1,9 +1,9 @@
 library(teems)
 
-data <- ems_data(dat_input = "~/dat/GTAP/v9/2011/gddat.har",
-                 par_input = "~/dat/GTAP/v9/2011/gdpar.har",
-                 set_input = "~/dat/GTAP/v9/2011/gdset.har",
-                 REG = "big3",
+data <- ems_data(dat_input = "~/dat/GTAP/v10A/flexagg10AY14/gsddat.har",
+                 par_input = "~/dat/GTAP/v10A/flexagg10AY14/gsdpar.har",
+                 set_input = "~/dat/GTAP/v10A/flexagg10AY14/gsdset.har",
+                 REG = "AR5",
                  TRAD_COMM = "macro_sector",
                  ENDW_COMM = "labor_agg")
 
@@ -22,8 +22,13 @@ model <- ems_model(
   )
 )
 
+numeraire <- ems_shock(var = "pfactwld",
+                       type = "uniform",
+                       value = 5)
+
 cmf_path <- ems_deploy(data = data,
-                       model = model)
+                       model = model,
+                       shock = numeraire)
 
 outputs <- ems_solve(cmf_path = cmf_path,
                      n_tasks = 1,
@@ -43,5 +48,4 @@ ems_check(check = "baseline",
           outputs = outputs,
           data = data,
           model = model,
-          max_tolerance = 1e-5,
-          null_shock = TRUE)
+          max_tolerance = 5.1)

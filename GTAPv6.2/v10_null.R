@@ -1,8 +1,8 @@
 library(teems)
 
-data <- ems_data(dat_input = "~/dat/GTAP/v9/2011/gddat.har",
-                 par_input = "~/dat/GTAP/v9/2011/gdpar.har",
-                 set_input = "~/dat/GTAP/v9/2011/gdset.har",
+data <- ems_data(dat_input = "~/dat/GTAP/v10A/flexagg10AY14/gsddat.har",
+                 par_input = "~/dat/GTAP/v10A/flexagg10AY14/gsdpar.har",
+                 set_input = "~/dat/GTAP/v10A/flexagg10AY14/gsdset.har",
                  REG = "big3",
                  TRAD_COMM = "macro_sector",
                  ENDW_COMM = "labor_agg")
