@@ -1,6 +1,6 @@
 library(teems)
 
-years <- c(2017, 2018, 2019, 2020, 2021, 2023, 2025, 2027, 2029, 2031, 2033)
+time_steps <- c(0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 16)
 data <- ems_data(
   dat_input = "~/dat/GTAP/v11c/flexAgg11c17/gsdfdat.har",
   par_input = "~/dat/GTAP/v11c/flexAgg11c17/gsdfpar.har",
@@ -9,7 +9,7 @@ data <- ems_data(
   COMM = "macro_sector",
   ACTS = "macro_sector",
   ENDW = "labor_agg",
-  time_steps = c(0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 16)
+  time_steps = time_steps
 )
 
 model <- ems_model(
